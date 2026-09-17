@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+:root {
+  --vei-black: #0B0B0B;
+  --vei-surface: #151515;
+  --vei-gold: #D4AF37;
+  --vei-gold-light: #E5C766;
+  --vei-white: #FFFFFF;
+  --vei-muted: #A3A3A3;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--vei-black);
+  color: var(--vei-white);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+::selection {
+  background: var(--vei-gold);
+  color: var(--vei-black);
+}
+
+.vei-globe {
+  box-shadow:
+    inset 0 0 80px rgba(212, 175, 55, 0.05),
+    0 0 80px rgba(212, 175, 55, 0.03);
+}
