@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import GlobeVisual from "@/components/GlobeVisual";
+import ChromeCellsBackground from "@/components/ChromeCellsBackground";
 import {
     PenTool,
     Megaphone,
@@ -28,6 +30,7 @@ import {
     Share2,
   
 } from "lucide-react";
+
 
 export default function HomePage() {
   return (
@@ -156,58 +159,112 @@ export default function HomePage() {
 
           </div>
           </section>
-          {/* =========================
-              INTRODUCTION
-          ========================== */}
-          <section className="relative border border-[#D4AF37] bg-[#0B0B0B] py-16">
+              {/* =========================
+                    INTRODUCTION
+                ========================== */}
+          <section className="relative overflow-hidden bg-[#0B0B0B] py-16">
 
-          <div className="mx-auto max-w-7xl px-6 lg:px-8">
-
-            <div className="mx-auto max-w-3xl text-center">
-
-              <div className="mb-5 flex items-center justify-center gap-3">
-                <span className="h-px w-10 bg-[#D4AF37]" />
-
-                <span className="text-xs font-semibold uppercase tracking-[0.3em] text-[#D4AF37]">
-                  Introduction
-                </span>
-
-                <span className="h-px w-10 bg-[#D4AF37]" />
-              </div>
-
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-                Where Visibility Meets Opportunity
-              </h2>
-
-              <p className="mt-8 text-base leading-7 text-white/60 sm:text-lg">
-                In today&apos;s competitive world, being good at what you do is not
-                enough. You must be{" "}
-                <span className="font-semibold text-white">
-                  visible, credible, connected and strategically positioned.
-                </span>
-              </p>
-
-              <p className="mt-6 text-base leading-7 text-white/60 sm:text-lg">
-                At Visibility Empire International, we help transform ideas,
-                businesses, professionals and organizations into recognizable and
-                opportunity-ready brands.
-              </p>
-
-              <p className="mt-6 text-base leading-7 text-white/60 sm:text-lg">
-                Through our integrated ecosystem of branding, digital marketing,
-                media, public relations, business development, networking, training
-                and international market access, we help our clients move from
-                visibility to sustainable growth.
-              </p>
-
+            {/* Globe bleeds in from the left edge */}
+            <div className="pointer-events-none absolute -left-20 top-1/2 hidden h-[500px] w-[500px] -translate-y-1/2 opacity-40 lg:block xl:h-[600px] xl:w-[600px]">
+              <GlobeVisual
+                scale={7}
+                speed={1.5}
+                direction="right"
+                dots={{ color: "#D4AF37", size: 4, density: 6, allDots: false }}
+                oceanColor="rgba(212,175,55,0.04)"
+                outlineColor="#D4AF37"
+                showOutline
+                graticuleColor="rgba(212,175,55,0.15)"
+                showGrid
+                markerConfig={{
+                  markers: [
+                    { lat: 40.7, lng: -74.0 },
+                    { lat: 51.5, lng: -0.12 },
+                    { lat: 25.2, lng: 55.27 },
+                  ],
+                  color: "#D4AF37",
+                  size: 45,
+                }}
+              />
             </div>
 
-          </div>
-          </section> 
+            {/* Globe bleeds in from the right edge */}
+            <div className="pointer-events-none absolute -right-20 top-1/2 hidden h-[500px] w-[500px] -translate-y-1/2 opacity-40 lg:block xl:h-[600px] xl:w-[600px]">
+              <GlobeVisual
+                scale={7}
+                speed={1.5}
+                direction="left"
+                dots={{ color: "#D4AF37", size: 4, density: 6, allDots: false }}
+                oceanColor="rgba(212,175,55,0.04)"
+                outlineColor="#D4AF37"
+                showOutline
+                graticuleColor="rgba(212,175,55,0.15)"
+                showGrid
+                markerConfig={{
+                  markers: [
+                    { lat: -1.29, lng: 36.82 },
+                    { lat: 5.6, lng: -0.19 },
+                    { lat: 6.52, lng: 3.38 },
+                  ],
+                  color: "#D4AF37",
+                  size: 45,
+                }}
+              />
+            </div>
+
+            <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
+              <div className="mx-auto max-w-3xl text-center">
+
+                <div className="mb-5 flex items-center justify-center gap-3">
+                  <span className="h-px w-10 bg-[#D4AF37]" />
+                  <span className="text-xs font-semibold uppercase tracking-[0.3em] text-[#D4AF37]">
+                    Introduction
+                  </span>
+                  <span className="h-px w-10 bg-[#D4AF37]" />
+                </div>
+
+                <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+                  Where Visibility Meets Opportunity
+                </h2>
+
+                <p className="mt-8 text-base leading-7 text-white/60 sm:text-lg">
+                  In today&apos;s competitive world, being good at what you do is not
+                  enough. You must be{" "}
+                  <span className="font-semibold text-white">
+                    visible, credible, connected and strategically positioned.
+                  </span>
+                </p>
+
+                <p className="mt-6 text-base leading-7 text-white/60 sm:text-lg">
+                  At Visibility Empire International, we help transform ideas,
+                  businesses, professionals and organizations into recognizable and
+                  opportunity-ready brands.
+                </p>
+
+                <p className="mt-6 text-base leading-7 text-white/60 sm:text-lg">
+                  Through our integrated ecosystem of branding, digital marketing,
+                  media, public relations, business development, networking, training
+                  and international market access, we help our clients move from
+                  visibility to sustainable growth.
+                </p>
+
+              </div>
+            </div>
+          </section>
           {/* =========================
                     WHAT WE DO
             ========================== */}
           <section className="relative overflow-hidden border-t border-white/10 bg-[#0B0B0B] py-16">
+          <div className="pointer-events-none absolute inset-0 z-0 opacity-80">
+            <ChromeCellsBackground
+              width={2000}
+              height={700}
+              background="#0B0B0B"
+              baseColor="#D4AF37"
+              accentColor="#F5E7B3"
+              style={{ opacity: 0.7 }}
+            />
+          </div>
 
           {/* Decorative gold corner accents */}
           <div className="pointer-events-none absolute inset-0 z-0">
@@ -258,7 +315,7 @@ export default function HomePage() {
                 <span className="text-[#D4AF37]">Work For You.</span>
               </h2>
 
-              <p className="mt-6 text-base leading-7 text-white/60 sm:text-lg">
+              <p className="mt-6 text-base leading-7 text-white/80 sm:text-lg">
                 Visibility Empire International brings business, media,
                 networking, education and global opportunities together within
                 one connected ecosystem.
@@ -320,7 +377,7 @@ export default function HomePage() {
                     {item.title}
                   </h3>
 
-                  <p className="mt-2 text-xs leading-5 text-white/50">
+                  <p className="mt-2 text-xs leading-5 text-white/70">
                     {item.description}
                   </p>
 
