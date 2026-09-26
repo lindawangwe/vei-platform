@@ -1,7 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import GlobeVisual from "@/components/GlobeVisual";
-import ChromeCellsBackground from "@/components/ChromeCellsBackground";
+import {
+   Globe as GlobeVisual,
+   ChromeCells as ChromeCellsBackground,
+   NeonBorder
+   }
+ from "@/components/originkit/Client";
+
 import {
     PenTool,
     Megaphone,
@@ -702,12 +707,26 @@ export default function HomePage() {
           </div>
         </div>
         </section>
-        {/* =========================
+
+          {/* =========================
                 FEATURED CTA
-         ========================== */}
+              ========================== */}
+
         <section className="relative overflow-hidden border-t border-white/10 bg-[#0B0B0B] py-20">
           <div className="mx-auto max-w-5xl px-6 lg:px-8">
-            <div className="relative overflow-hidden border border-[#D4AF37] bg-gradient-to-br from-[#151515] to-[#0B0B0B] px-8 py-16 text-center shadow-[0_0_40px_rgba(212,175,55,0.15)] sm:px-16">
+            <div className="relative bg-gradient-to-br from-[#151515] to-[#0B0B0B] px-8 py-16 text-center sm:px-16">
+
+              {/* Neon border overlay - sits on top, draws only the edge */}
+              <div className="pointer-events-none absolute inset-0 z-20">
+                <NeonBorder
+                  color="#D4AF37"
+                  rounded={30}
+                  thickness={6}
+                  borderSize={50}
+                  glow={85}
+                  speed={18}
+                />
+              </div>
 
               {/* Ambient glow */}
               <div className="pointer-events-none absolute -top-20 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-[#D4AF37]/10 blur-[100px]" />

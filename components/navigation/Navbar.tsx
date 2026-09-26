@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { TactileButton } from "../originkit/Client";
 import Link from "next/link";
 import {
   Menu,
@@ -167,9 +169,43 @@ const moreItems: DropdownItem[] = [
 ];
 
 export default function Navbar() {
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileDropdown, setMobileDropdown] = useState<string | null>(null);
+  const [pressedKey, setPressedKey] = useState<string | null>(null);
+
+  // Triggers the gold glow on a keycap, then fades it out
+  const handlePress = (name: string) => {
+    setPressedKey(name);
+    window.setTimeout(() => {
+      setPressedKey((curr) => (curr === name ? null : curr));
+    }, 550);
+  };
+
+  // Shared 3D keycap styling for desktop nav items
+  const keycapBase =
+    "relative mx-0.5 flex items-center gap-1 rounded-lg border border-white/10 " +
+    "bg-gradient-to-b from-[#222222] to-[#0A0A0A] px-4 py-2.5 text-[13px] font-medium " +
+    "text-white/80 transition-transform duration-150 ease-out hover:text-[#D4AF37] " +
+    "hover:from-[#272727] hover:to-[#0D0D0D] " +
+    "[box-shadow:0_1px_0_#020202,0_2px_0_#020202,0_3px_0_#010101,0_4px_0_#010101,0_5px_0_#000000,0_6px_8px_rgba(0,0,0,0.6)] " +
+    "active:translate-y-[5px] " +
+    "active:[box-shadow:0_1px_0_#000000,0_2px_4px_rgba(0,0,0,0.5)]";
+
+  const keycapGlow =
+    "translate-y-[5px] border-[#D4AF37]/70 text-[#D4AF37] " +
+    "[box-shadow:0_1px_0_#000000,0_0_20px_6px_rgba(212,175,55,0.6)]";
+
+     const isActive = (name: string, href?: string) => {
+        if (pressedKey === name) return true;
+        if (openDropdown === name) return true;
+        if (href && pathname === href) return true;
+        return false;
+      };
+
+  const keycapClass = (name: string, href?: string) =>
+    `${keycapBase} ${isActive(name, href) ? keycapGlow : ""}`;
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#0B0B0B]/95 backdrop-blur-xl">
@@ -208,19 +244,18 @@ export default function Navbar() {
 
           {navigation.map((item) => {
             // ---- plain link ----
-            if (!item.dropdown) {
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="group relative flex items-center gap-1 px-3 py-7 text-[13px] font-medium text-white/80 transition hover:text-[#D4AF37]"
-                >
-                  {item.name}
-                  <span className="absolute bottom-0 left-3 right-3 h-px origin-left scale-x-0 bg-[#D4AF37] transition-transform group-hover:scale-x-100" />
-                </Link>
-              );
+              if (!item.dropdown) {
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    onClick={() => handlePress(item.name)}
+                    className={keycapClass(item.name, item.href)}
+                  >
+                    {item.name}
+                  </Link>
+                );
             }
-
             // ---- mega menu (Ecosystem) ----
             if (item.mega) {
               return (
@@ -231,10 +266,11 @@ export default function Navbar() {
                   onMouseLeave={() => setOpenDropdown(null)}
                 >
                   <button
-                    className="flex items-center gap-1 px-3 py-7 text-[13px] font-medium text-white/80 transition hover:text-[#D4AF37]"
-                    onClick={() =>
-                      setOpenDropdown(openDropdown === item.name ? null : item.name)
-                    }
+                    className={keycapClass(item.name)}
+                    onClick={() => {
+                      handlePress(item.name);
+                      setOpenDropdown(openDropdown === item.name ? null : item.name);
+                    }}
                   >
                     {item.name}
                     <ChevronDown
@@ -318,10 +354,11 @@ export default function Navbar() {
                 onMouseLeave={() => setOpenDropdown(null)}
               >
                 <button
-                  className="flex items-center gap-1 px-3 py-7 text-[13px] font-medium text-white/80 transition hover:text-[#D4AF37]"
-                  onClick={() =>
-                    setOpenDropdown(openDropdown === item.name ? null : item.name)
-                  }
+                  className={keycapClass(item.name)}
+                  onClick={() => {
+                    handlePress(item.name);
+                    setOpenDropdown(openDropdown === item.name ? null : item.name);
+                  }}
                 >
                   {item.name}
                   <ChevronDown
@@ -368,7 +405,13 @@ export default function Navbar() {
             onMouseEnter={() => setOpenDropdown("More")}
             onMouseLeave={() => setOpenDropdown(null)}
           >
-            <button className="flex items-center gap-1 px-3 py-7 text-[13px] font-medium text-white/80 transition hover:text-[#D4AF37]">
+            <button
+              className={keycapClass("More")}
+              onClick={() => {
+                handlePress("More");
+                setOpenDropdown(openDropdown === "More" ? null : "More");
+              }}
+            >
               More
               <ChevronDown
                 className={`h-3.5 w-3.5 transition-transform ${
@@ -425,19 +468,36 @@ export default function Navbar() {
             Contact
           </Link>
 
-          <Link
-            href="/get-visible"
-            className="rounded-lg border border-[#D4AF37] px-4 py-2.5 text-sm font-semibold text-[#D4AF37] transition hover:bg-[#D4AF37] hover:text-black"
-          >
-            Get Visible
-          </Link>
+          <TactileButton
+            label="Get Visible"
+            link="/get-visible"
+            padding="10px 18px"
+            rounded={20}
+            font={{ fontSize: 14, fontWeight: 600 }}
+            colors={{
+              fill: "#0B0B0B",
+              textColor: "#D4AF37",
+              hoverFill: "#D4AF37",
+              hoverTextColor: "#000000",
+            }}
+            border={{ border: "1px solid #D4AF37" }}
+            base={{ color: "#8a6d1f", offsetX: 0, offsetY: 4 }}
+          />
 
-          <Link
-            href="/partnerships"
-            className="rounded-lg bg-[#D4AF37] px-4 py-2.5 text-sm font-semibold text-black transition hover:bg-[#E5C766]"
-          >
-            Partner With VEI
-          </Link>
+          <TactileButton
+            label="Partner With VEI"
+            link="/partnerships"
+            padding="10px 18px"
+            rounded={20}
+            font={{ fontSize: 14, fontWeight: 600 }}
+            colors={{
+              fill: "#D4AF37",
+              textColor: "#000000",
+              hoverFill: "#E5C766",
+              hoverTextColor: "#000000",
+            }}
+            base={{ color: "#8a6d1f", offsetX: 0, offsetY: 4 }}
+          />
         </div>
 
         {/* ========================================= */}
@@ -447,202 +507,135 @@ export default function Navbar() {
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
-          className="ml-auto flex h-11 w-11 items-center justify-center rounded-lg border border-white/10 text-white xl:hidden"
+          aria-expanded={mobileOpen}
+          className="ml-auto flex h-11 w-11 items-center justify-center rounded-lg border border-white/10 text-white transition hover:border-[#D4AF37]/50 hover:text-[#D4AF37] xl:hidden"
         >
           {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
-      </div>
 
-      {/* ========================================= */}
-      {/* MOBILE NAVIGATION */}
-      {/* ========================================= */}
+        {mobileOpen && (
+          <nav className="absolute inset-x-0 top-full max-h-[calc(100dvh-5rem)] overflow-y-auto border-t border-white/10 bg-[#0B0B0B] px-6 py-4 shadow-2xl xl:hidden">
+            <div className="mx-auto max-w-[1600px] space-y-1">
+              {navigation.map((item) => {
+                if (!item.dropdown) {
+                  const Icon = item.name === "Home" ? Home : item.name === "About Us" ? Building2 : Target;
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-white/80 transition hover:bg-white/5 hover:text-[#D4AF37]"
+                    >
+                      <Icon className="h-4 w-4 text-[#D4AF37]" />
+                      {item.name}
+                    </Link>
+                  );
+                }
 
-      {mobileOpen && (
-        <div className="max-h-[calc(100vh-80px)] overflow-y-auto border-t border-white/10 bg-[#0B0B0B] xl:hidden">
-          <div className="space-y-1 px-5 py-5">
-
-            {navigation.map((item) => {
-              // ---- plain link ----
-              if (!item.dropdown) {
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    onClick={() => setMobileOpen(false)}
-                    className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm text-white/80 transition hover:bg-white/5 hover:text-[#D4AF37]"
-                  >
-                    {item.name === "Home" && <Home className="h-4 w-4 text-[#D4AF37]" />}
-                    {item.name === "About Us" && <Building2 className="h-4 w-4 text-[#D4AF37]" />}
-                    {item.name === "International Opportunities" && <Globe2 className="h-4 w-4 text-[#D4AF37]" />}
-                    {item.name}
-                  </Link>
-                );
-              }
-
-              const isOpen = mobileDropdown === item.name;
-
-              // ---- mega menu (Ecosystem) — flattened accordion ----
-              if (item.mega) {
+                const expanded = mobileDropdown === item.name;
                 return (
                   <div key={item.name}>
                     <button
-                      onClick={() => setMobileDropdown(isOpen ? null : item.name)}
-                      className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-sm text-white/80 transition hover:bg-white/5 hover:text-[#D4AF37]"
+                      type="button"
+                      aria-expanded={expanded}
+                      onClick={() => setMobileDropdown(expanded ? null : item.name)}
+                      className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-left text-sm font-medium text-white/80 transition hover:bg-white/5 hover:text-[#D4AF37]"
                     >
-                      <span className="flex items-center gap-3">
-                        <Layers className="h-4 w-4 text-[#D4AF37]" />
-                        {item.name}
-                      </span>
-                      <ChevronDown
-                        className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
-                      />
+                      {item.name}
+                      <ChevronDown className={`h-4 w-4 transition-transform ${expanded ? "rotate-180" : ""}`} />
                     </button>
 
-                    {isOpen && (
-                      <div className="ml-4 space-y-4 border-l border-[#D4AF37]/20 pl-3 pt-2">
-                        {item.columns.map((col) => {
-                          const ColIcon = col.icon;
-                          return (
-                            <div key={col.name}>
-                              <Link
-                                href={col.href}
-                                onClick={() => setMobileOpen(false)}
-                                className="flex items-center gap-2 py-1.5 text-sm font-semibold text-white hover:text-[#D4AF37]"
-                              >
-                                <ColIcon className="h-3.5 w-3.5 text-[#D4AF37]" />
-                                {col.name}
-                              </Link>
-                              {col.items && (
-                                <div className="mt-1 space-y-0.5 pl-5">
-                                  {col.items.map((sub) => (
-                                    <Link
-                                      key={sub.name}
-                                      href={sub.href}
-                                      onClick={() => setMobileOpen(false)}
-                                      className="block py-1.5 text-[13px] text-white/55 hover:text-[#D4AF37]"
-                                    >
-                                      {sub.name}
-                                    </Link>
-                                  ))}
+                    {expanded && (
+                      <div className="ml-3 border-l border-white/10 py-1 pl-3">
+                        {item.mega
+                          ? item.columns.map((column) => {
+                              const Icon = column.icon;
+                              return (
+                                <div key={column.name} className="py-2">
+                                  <Link
+                                    href={column.href}
+                                    onClick={() => setMobileOpen(false)}
+                                    className="flex items-center gap-2 py-2 text-sm font-semibold text-white hover:text-[#D4AF37]"
+                                  >
+                                    <Icon className="h-4 w-4 text-[#D4AF37]" />
+                                    {column.name}
+                                  </Link>
+                                  {column.items?.map((subItem) => {
+                                    const SubIcon = subItem.icon;
+                                    return (
+                                      <Link
+                                        key={subItem.name}
+                                        href={subItem.href}
+                                        onClick={() => setMobileOpen(false)}
+                                        className="flex items-center gap-2 py-2 pl-6 text-sm text-white/60 transition hover:text-white"
+                                      >
+                                        <SubIcon className="h-3.5 w-3.5" />
+                                        {subItem.name}
+                                      </Link>
+                                    );
+                                  })}
                                 </div>
-                              )}
-                            </div>
-                          );
-                        })}
+                              );
+                            })
+                          : item.items.map((subItem) => {
+                              const Icon = subItem.icon;
+                              return (
+                                <Link
+                                  key={subItem.name}
+                                  href={subItem.href}
+                                  onClick={() => setMobileOpen(false)}
+                                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-white/70 transition hover:bg-white/5 hover:text-white"
+                                >
+                                  <Icon className="h-4 w-4 text-[#D4AF37]" />
+                                  {subItem.name}
+                                </Link>
+                              );
+                            })}
                       </div>
                     )}
                   </div>
                 );
-              }
+              })}
 
-              // ---- standard dropdown (Our Services) ----
-              return (
-                <div key={item.name}>
-                  <button
-                    onClick={() => setMobileDropdown(isOpen ? null : item.name)}
-                    className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-sm text-white/80 transition hover:bg-white/5 hover:text-[#D4AF37]"
-                  >
-                    <span className="flex items-center gap-3">
-                      <BriefcaseBusiness className="h-4 w-4 text-[#D4AF37]" />
+              <div className="border-t border-white/10 pt-2">
+                {moreItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm text-white/70 transition hover:bg-white/5 hover:text-white"
+                    >
+                      <Icon className="h-4 w-4 text-[#D4AF37]" />
                       {item.name}
-                    </span>
-                    <ChevronDown
-                      className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
-                    />
-                  </button>
+                    </Link>
+                  );
+                })}
+              </div>
 
-                  {isOpen && (
-                    <div className="ml-4 border-l border-[#D4AF37]/20 pl-3">
-                      {item.items.map((subItem) => {
-                        const Icon = subItem.icon;
-                        return (
-                          <Link
-                            key={subItem.name}
-                            href={subItem.href}
-                            onClick={() => setMobileOpen(false)}
-                            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-white/60 hover:text-[#D4AF37]"
-                          >
-                            <Icon className="h-4 w-4 text-[#D4AF37]" />
-                            {subItem.name}
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-
-            {/* More */}
-            <div>
-              <button
-                onClick={() =>
-                  setMobileDropdown(mobileDropdown === "More" ? null : "More")
-                }
-                className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-sm text-white/80 hover:bg-white/5 hover:text-[#D4AF37]"
-              >
-                <span className="flex items-center gap-3">
-                  <LineChart className="h-4 w-4 text-[#D4AF37]" />
-                  More
-                </span>
-                <ChevronDown
-                  className={`h-4 w-4 transition-transform ${
-                    mobileDropdown === "More" ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
-
-              {mobileDropdown === "More" && (
-                <div className="ml-4 border-l border-[#D4AF37]/20 pl-3">
-                  {moreItems.map((item) => {
-                    const Icon = item.icon;
-                    return (
-                      <Link
-                        key={item.name}
-                        href={item.href}
-                        onClick={() => setMobileOpen(false)}
-                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-white/60 hover:text-[#D4AF37]"
-                      >
-                        <Icon className="h-4 w-4 text-[#D4AF37]" />
-                        {item.name}
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
+              <div className="grid grid-cols-2 gap-2 border-t border-white/10 pt-4">
+                <Link
+                  href="/contact"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center justify-center gap-2 rounded-lg border border-white/15 px-3 py-3 text-sm font-medium text-white/80 transition hover:border-[#D4AF37]/50 hover:text-[#D4AF37]"
+                >
+                  <Phone className="h-4 w-4" />
+                  Contact
+                </Link>
+                <Link
+                  href="/get-visible"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center justify-center gap-2 rounded-lg bg-[#D4AF37] px-3 py-3 text-sm font-semibold text-black transition hover:bg-[#E5C766]"
+                >
+                  Get Visible
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
             </div>
-
-            {/* Contact */}
-            <Link
-              href="/contact"
-              onClick={() => setMobileOpen(false)}
-              className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm text-white/80 hover:bg-white/5 hover:text-[#D4AF37]"
-            >
-              <Phone className="h-4 w-4 text-[#D4AF37]" />
-              Contact Us
-            </Link>
-
-            {/* Mobile CTAs */}
-            <div className="mt-5 grid gap-2 border-t border-white/10 pt-5">
-              <Link
-                href="/get-visible"
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-center rounded-lg bg-[#D4AF37] px-4 py-3 text-sm font-semibold text-black"
-              >
-                Get Visible
-              </Link>
-              <Link
-                href="/partnerships"
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-center rounded-lg border border-[#D4AF37] px-4 py-3 text-sm font-semibold text-[#D4AF37]"
-              >
-                Partner With VEI
-              </Link>
-            </div>
-
-          </div>
-        </div>
-      )}
+          </nav>
+        )}
+      </div>
     </header>
   );
 }

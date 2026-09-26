@@ -1,4 +1,5 @@
-import Image from "next/image";
+
+import { ServiceBackground } from "@/components/originkit/Client";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -186,8 +187,22 @@ export default function ServicesPage() {
     <main className="min-h-screen scroll-smooth bg-[#0B0B0B] text-white">
       {/* HERO - Integrated Solutions */}
       <section className="relative flex min-h-[85vh] items-end overflow-hidden border-b border-white/10 pt-20">
-        {/* PLACEHOLDER - replace src with the real background image */}
-        <Image src="/images/services-hero-bg.webp" alt="" fill priority sizes="100vw" className="object-cover" />
+
+        {/* Procedural background - replaces the static placeholder image */}
+        <div className="absolute inset-0">
+          <ServiceBackground
+            background="#0B0B0B"
+            lineColor="#8a6d1f"
+            accent="#D4AF37"
+            density={90}
+            speed={70}
+            relief={100}
+            sunSize={80}
+            cameraHeight={94}
+            hover={150}
+          />
+        </div>
+
         <div className="absolute inset-0 bg-[#0B0B0B]/55" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0B] via-[#0B0B0B]/70 to-transparent" />
         <div className="pointer-events-none absolute -bottom-32 left-1/3 h-96 w-96 rounded-full bg-[#D4AF37]/10 blur-[140px]" />
